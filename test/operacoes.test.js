@@ -74,3 +74,111 @@ describe('Suíte de Testes Fraca para 50 Operações Aritméticas', () => {
   test('49. deve calcular o triplo de um número', () => { expect(triplo(10)).toBe(30); });
   test('50. deve calcular a metade de um número', () => { expect(metade(20)).toBe(10); });
 });
+
+// Testes adicionados depois da primeira rodada do Stryker.
+// Cada bloco mira nos mutantes que sobreviveram naquela função.
+
+describe('Erros e mensagens', () => {
+  test('divisão por zero lança a mensagem correta', () => {
+    expect(() => divisao(5, 0)).toThrow('Divisão por zero não é permitida.');
+  });
+
+  test('raiz quadrada de negativo lança erro', () => {
+    expect(() => raizQuadrada(-9)).toThrow('Não é possível calcular a raiz quadrada de um número negativo.');
+  });
+
+  test('fatorial de negativo lança erro', () => {
+    expect(() => fatorial(-1)).toThrow('Fatorial não é definido para números negativos.');
+  });
+
+  test('inverso de zero lança erro', () => {
+    expect(() => inverso(0)).toThrow('Não é possível inverter o número zero.');
+  });
+
+  test('máximo, mínimo e mediana de array vazio lançam erro', () => {
+    expect(() => maximoArray([])).toThrow('Array vazio');
+    expect(() => minimoArray([])).toThrow('Array vazio');
+    expect(() => medianaArray([])).toThrow('Array vazio');
+  });
+});
+
+describe('Casos de fronteira', () => {
+  test('raiz quadrada de zero é zero (zero não é negativo)', () => {
+    expect(raizQuadrada(0)).toBe(0);
+  });
+
+  test('fatorial de 0 e de 1 é 1', () => {
+    expect(fatorial(0)).toBe(1);
+    expect(fatorial(1)).toBe(1);
+    expect(fatorial(5)).toBe(120);
+  });
+
+  test('média de array vazio é 0', () => {
+    expect(mediaArray([])).toBe(0);
+  });
+
+  test('produto de array vazio é 1', () => {
+    expect(produtoArray([])).toBe(1);
+  });
+
+  test('isMaiorQue e isMenorQue com números iguais', () => {
+    expect(isMaiorQue(5, 5)).toBe(false);
+    expect(isMenorQue(5, 5)).toBe(false);
+  });
+
+  test('clamp abaixo do mínimo, acima do máximo e nos limites', () => {
+    expect(clamp(-5, 0, 10)).toBe(0);
+    expect(clamp(15, 0, 10)).toBe(10);
+    expect(clamp(0, 0, 10)).toBe(0);
+    expect(clamp(10, 0, 10)).toBe(10);
+  });
+});
+
+describe('Resultados falsos', () => {
+  // A suíte original só testava o caminho que retorna true.
+  // Assim, trocar a expressão inteira por "true" não quebrava nada.
+  test('isPar e isImpar', () => {
+    expect(isPar(7)).toBe(false);
+    expect(isImpar(10)).toBe(false);
+  });
+
+  test('isDivisivel quando não divide', () => {
+    expect(isDivisivel(10, 3)).toBe(false);
+  });
+
+  test('isMaiorQue, isMenorQue e isEqual', () => {
+    expect(isMaiorQue(3, 8)).toBe(false);
+    expect(isMenorQue(10, 2)).toBe(false);
+    expect(isEqual(7, 8)).toBe(false);
+  });
+
+  test('isPrimo com 0, 1 e números compostos', () => {
+    expect(isPrimo(0)).toBe(false);
+    expect(isPrimo(1)).toBe(false);
+    expect(isPrimo(4)).toBe(false);
+    expect(isPrimo(9)).toBe(false);
+    expect(isPrimo(2)).toBe(true);
+  });
+});
+
+describe('Valores que não escondem o erro', () => {
+  // Com 0 °C a multiplicação por 9/5 dá 0 de qualquer jeito,
+  // então trocar * por / passava despercebido.
+  test('celsius para fahrenheit com 100 graus', () => {
+    expect(celsiusParaFahrenheit(100)).toBe(212);
+  });
+
+  test('fahrenheit para celsius com 212 graus', () => {
+    expect(fahrenheitParaCelsius(212)).toBe(100);
+  });
+
+  // O teste original usava [1, 2, 3, 4, 5], que já vem ordenado
+  // e tem tamanho ímpar, então o sort e o ramo par nunca eram verificados.
+  test('mediana de array desordenado de tamanho ímpar', () => {
+    expect(medianaArray([9, 1, 5])).toBe(5);
+  });
+
+  test('mediana de array desordenado de tamanho par', () => {
+    expect(medianaArray([8, 2, 6, 4])).toBe(5);
+  });
+});
